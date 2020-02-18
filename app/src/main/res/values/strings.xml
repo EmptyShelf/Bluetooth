@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Bluetooth</string>
+    <string name="turn_on">Turn On</string>
+    <string name="turn_off">Turn Off</string>
+    <string name="discoverable">Discoverable</string>
+    <string name="get_paired_devices">Get Paired Devices</string>
+    <string name="bluetooth_status">Bluetooth Status</string>
+    <string name="stPairedDevices">Paired Devices</string>
+    <string name="stBluetoothIsAvailable">Bluetooth is available</string>
+    <string name="stBluetoothIsNotAvailable">Bluetooth is not available</string>
 </resources>

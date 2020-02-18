@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center_horizontal"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <TextView
@@ -28,6 +28,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="8dp"
+        android:contentDescription="@string/bluetooth_status"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statusBluetoothTv" />
@@ -39,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:minWidth="200dp"
-        android:text="Turn On"
+        android:text="@string/turn_on"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bluetoothIv" />
@@ -51,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:minWidth="200dp"
-        android:text="Turn Off"
+        android:text="@string/turn_off"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/onBtn" />
@@ -63,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:minWidth="200dp"
-        android:text="Discoverable"
+        android:text="@string/discoverable"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/offBtn" />
@@ -75,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:minWidth="200dp"
-        android:text="Get Paired Devices"
+        android:text="@string/get_paired_devices"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/discoverableBtn" />
@@ -93,5 +94,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pairedBtn" />
+
+    <CheckBox
+        android:id="@+id/cbTurnOnBluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Turn On Bluetooth"
+        app:layout_constraintStart_toStartOf="@+id/cbMakeDiscoverable"
+        app:layout_constraintTop_toBottomOf="@+id/pairedTv" />
+
+    <CheckBox
+        android:id="@+id/cbMakeDiscoverable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Make Discoverable"
+        app:layout_constraintStart_toStartOf="@+id/cbShowPairedDevices"
+        app:layout_constraintTop_toBottomOf="@+id/cbTurnOnBluetooth" />
+
+    <CheckBox
+        android:id="@+id/cbShowPairedDevices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Show Paired Devices"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cbMakeDiscoverable" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

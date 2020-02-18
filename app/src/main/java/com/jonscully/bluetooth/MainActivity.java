@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,50 +21,78 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BT = 0;
     private static final int REQUEST_DISCOVER_BT = 1;
 
-    TextView mStatusBlueTv;
-    TextView mPairedTv;
-    ImageView mBlueIv;
-    Button mOnBtn;
-    Button mOffBtn;
-    Button mDiscoverBtn;
-    Button mPairedBtn;
-    BluetoothAdapter mBlueAdapter;
+    private TextView mPairedTv;
+    private ImageView mBlueIv;
+    private BluetoothAdapter mBluetoothAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStatusBlueTv = findViewById(R.id.statusBluetoothTv);
+        TextView mStatusBlueTv = findViewById(R.id.statusBluetoothTv);
         mPairedTv     = findViewById(R.id.pairedTv);
         mBlueIv       = findViewById(R.id.bluetoothIv);
-        mOnBtn        = findViewById(R.id.onBtn);
-        mOffBtn       = findViewById(R.id.offBtn);
-        mDiscoverBtn  = findViewById(R.id.discoverableBtn);
-        mPairedBtn    = findViewById(R.id.pairedBtn);
-        mBlueAdapter  = BluetoothAdapter.getDefaultAdapter();
+        Button mOnBtn = findViewById(R.id.onBtn);
+        Button mOffBtn = findViewById(R.id.offBtn);
+        Button mDiscoverBtn = findViewById(R.id.discoverableBtn);
+        Button mPairedBtn = findViewById(R.id.pairedBtn);
+        CheckBox cbTurnOnBluetooth = findViewById(R.id.cbTurnOnBluetooth);
+        CheckBox cbMakeDiscoverable = findViewById(R.id.cbMakeDiscoverable);
+        CheckBox cbShowPairedDevices = findViewById(R.id.cbShowPairedDevices);
 
-        // check Bluetooth availablility
-        if (mBlueAdapter == null){
-            mStatusBlueTv.setText("Bluetooth is not available");
+
+        mBluetoothAdapter  = BluetoothAdapter.getDefaultAdapter();
+
+        // check Bluetooth availability
+        if (mBluetoothAdapter == null){
+            mStatusBlueTv.setText(R.string.stBluetoothIsNotAvailable);
         }
         else {
-            mStatusBlueTv.setText("Bluetooth is available");
+            mStatusBlueTv.setText(R.string.stBluetoothIsAvailable);
         }
 
         // set Bluetooth status icon
-        if (mBlueAdapter.isEnabled()){
+        if (mBluetoothAdapter.isEnabled()){
             mBlueIv.setImageResource(R.drawable.ic_action_on);
+            cbTurnOnBluetooth.setChecked(true);
         }
         else {
             mBlueIv.setImageResource(R.drawable.ic_action_off);
+            cbTurnOnBluetooth.setChecked(false);
         }
+
+        cbTurnOnBluetooth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (mBluetoothAdapter.isEnabled()){
+                        showToast("Bluetooth is on");
+                    }
+                    else {
+                        showToast("Turning Bluetooth on...");
+                        //intent to on bluetooth
+                        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(intent, REQUEST_ENABLE_BT);
+                    }
+                } else {
+                    if (mBluetoothAdapter.isEnabled()){
+                        mBluetoothAdapter.disable();
+                        showToast("Turning Bluetooth off");
+                        mBlueIv.setImageResource(R.drawable.ic_action_off);
+                    }
+                    else {
+                        showToast("Bluetooth is off");
+                    }
+                }
+            }
+        });
 
         // Turn On button
         mOnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mBlueAdapter.isEnabled()){
+                if (!mBluetoothAdapter.isEnabled()){
                     showToast("Turning Bluetooth on...");
                     //intent to on bluetooth
                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -78,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         mOffBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBlueAdapter.isEnabled()){
-                    mBlueAdapter.disable();
+                if (mBluetoothAdapter.isEnabled()){
+                    mBluetoothAdapter.disable();
                     showToast("Turning Bluetooth off");
                     mBlueIv.setImageResource(R.drawable.ic_action_off);
                 }
@@ -93,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         mDiscoverBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!mBlueAdapter.isDiscovering()){
+                if (!mBluetoothAdapter.isDiscovering()){
                     showToast("Making this device discoverable");
                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
                     startActivityForResult(intent, REQUEST_DISCOVER_BT);
@@ -105,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
         mPairedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mBlueAdapter.isEnabled()){
-                    mPairedTv.setText("Paired Devices");
-                    Set<BluetoothDevice> devices = mBlueAdapter.getBondedDevices();
+                if (mBluetoothAdapter.isEnabled()){
+                    mPairedTv.setText(R.string.stPairedDevices);
+                    Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
                     for (BluetoothDevice device: devices){
                         mPairedTv.append("\nDevice: " + device.getName()+ ", " + device);
                     }
