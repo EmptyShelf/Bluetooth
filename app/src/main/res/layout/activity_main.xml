@@ -96,31 +96,31 @@
         app:layout_constraintTop_toBottomOf="@+id/pairedBtn" />
 
     <CheckBox
-        android:id="@+id/cbTurnOnBluetooth"
+        android:id="@+id/cbEnableBluetooth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Turn On Bluetooth"
-        app:layout_constraintStart_toStartOf="@+id/cbMakeDiscoverable"
+        android:text="Enable Bluetooth"
+        app:layout_constraintStart_toStartOf="@+id/cbDiscoverableDevice"
         app:layout_constraintTop_toBottomOf="@+id/pairedTv" />
 
     <CheckBox
-        android:id="@+id/cbMakeDiscoverable"
+        android:id="@+id/cbDiscoverableDevice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Make Discoverable"
-        app:layout_constraintStart_toStartOf="@+id/cbShowPairedDevices"
-        app:layout_constraintTop_toBottomOf="@+id/cbTurnOnBluetooth" />
+        android:text="Discoverable Device"
+        app:layout_constraintStart_toStartOf="@+id/cbListPairedDevices"
+        app:layout_constraintTop_toBottomOf="@+id/cbEnableBluetooth" />
 
     <CheckBox
-        android:id="@+id/cbShowPairedDevices"
+        android:id="@+id/cbListPairedDevices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Show Paired Devices"
+        android:text="List Paired Devices"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cbMakeDiscoverable" />
+        app:layout_constraintTop_toBottomOf="@+id/cbDiscoverableDevice" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

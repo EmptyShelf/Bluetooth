@@ -37,10 +37,11 @@ public class MainActivity extends AppCompatActivity {
         Button mOffBtn = findViewById(R.id.offBtn);
         Button mDiscoverBtn = findViewById(R.id.discoverableBtn);
         Button mPairedBtn = findViewById(R.id.pairedBtn);
-        CheckBox cbTurnOnBluetooth = findViewById(R.id.cbTurnOnBluetooth);
-        CheckBox cbMakeDiscoverable = findViewById(R.id.cbMakeDiscoverable);
-        CheckBox cbShowPairedDevices = findViewById(R.id.cbShowPairedDevices);
+        CheckBox cbEnableBluetooth = findViewById(R.id.cbEnableBluetooth);
+        CheckBox cbDiscoverableDevice = findViewById(R.id.cbDiscoverableDevice);
+        CheckBox cbListPairedDevices = findViewById(R.id.cbListPairedDevices);
 
+        final Intent intentDiscoverable;
 
         mBluetoothAdapter  = BluetoothAdapter.getDefaultAdapter();
 
@@ -55,14 +56,14 @@ public class MainActivity extends AppCompatActivity {
         // set Bluetooth status icon
         if (mBluetoothAdapter.isEnabled()){
             mBlueIv.setImageResource(R.drawable.ic_action_on);
-            cbTurnOnBluetooth.setChecked(true);
+            cbEnableBluetooth.setChecked(true);
         }
         else {
             mBlueIv.setImageResource(R.drawable.ic_action_off);
-            cbTurnOnBluetooth.setChecked(false);
+            cbEnableBluetooth.setChecked(false);
         }
 
-        cbTurnOnBluetooth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        cbEnableBluetooth.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -71,9 +72,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else {
                         showToast("Turning Bluetooth on...");
-                        //intent to on bluetooth
-                        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                        startActivityForResult(intent, REQUEST_ENABLE_BT);
+                        intentDiscoverable = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(intentDiscoverable, REQUEST_ENABLE_BT);
                     }
                 } else {
                     if (mBluetoothAdapter.isEnabled()){
@@ -88,13 +88,66 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        intentDiscoverable.on
+
+
+        cbDiscoverableDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (mBluetoothAdapter.isDiscovering()) {
+                        showToast("Device discovery is on");
+                    } else {
+                        showToast("Making this device discoverable");
+                        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                        //intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+                        startActivityForResult(intent, REQUEST_DISCOVER_BT);
+
+                    }
+/*
+                } else {
+                    if (mBluetoothAdapter.isDiscovering()) {
+                        showToast("Disabling device discovery");
+                        //Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                        //startActivityForResult(intent, REQUEST_DISCOVER_BT);
+                    }
+                    else {
+                        showToast("Device discovery is off");
+                    }
+                }
+*/
+                }
+            }
+        });
+
+
+        cbListPairedDevices.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    if (mBluetoothAdapter.isEnabled()){
+                        mPairedTv.setText(R.string.stPairedDevices);
+                        Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
+                        for (BluetoothDevice device: devices){
+                            mPairedTv.append("\nDevice: " + device.getName()+ ", " + device);
+                        }
+                    }
+                    else {
+                        showToast("Bluetooth is off");
+                    }
+                }
+                else {
+                    mPairedTv.setText("");
+                }
+            }
+        });
+
         // Turn On button
         mOnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!mBluetoothAdapter.isEnabled()){
                     showToast("Turning Bluetooth on...");
-                    //intent to on bluetooth
                     Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(intent, REQUEST_ENABLE_BT);
                 }
@@ -161,6 +214,16 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     showToast("Bluetooth is off (no access)");
                 }
+                break;
+            case REQUEST_DISCOVER_BT:
+                if (resultCode == RESULT_OK){
+                    mBlueIv.setImageResource(R.drawable.ic_action_on);
+                    showToast("Bluetooth is on");
+                }
+                else {
+                    showToast("Bluetooth is off (no access)");
+                }
+                break;
                 break;
         }
 
