@@ -3,7 +3,9 @@ package com.jonscully.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -41,8 +43,6 @@ public class MainActivity extends AppCompatActivity {
         CheckBox cbDiscoverableDevice = findViewById(R.id.cbDiscoverableDevice);
         CheckBox cbListPairedDevices = findViewById(R.id.cbListPairedDevices);
 
-        final Intent intentDiscoverable;
-
         mBluetoothAdapter  = BluetoothAdapter.getDefaultAdapter();
 
         // check Bluetooth availability
@@ -72,10 +72,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else {
                         showToast("Turning Bluetooth on...");
-                        intentDiscoverable = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        final Intent intentDiscoverable = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         startActivityForResult(intentDiscoverable, REQUEST_ENABLE_BT);
                     }
-                } else {
+                }
+                else {
                     if (mBluetoothAdapter.isEnabled()){
                         mBluetoothAdapter.disable();
                         showToast("Turning Bluetooth off");
@@ -87,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        intentDiscoverable.on
 
 
         cbDiscoverableDevice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -104,21 +103,51 @@ public class MainActivity extends AppCompatActivity {
                         startActivityForResult(intent, REQUEST_DISCOVER_BT);
 
                     }
-/*
-                } else {
+                }
+                else {
                     if (mBluetoothAdapter.isDiscovering()) {
-                        showToast("Disabling device discovery");
-                        //Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                        //startActivityForResult(intent, REQUEST_DISCOVER_BT);
+                        mBluetoothAdapter.cancelDiscovery();
+                        showToast("Canceling device discovery");
                     }
                     else {
                         showToast("Device discovery is off");
                     }
                 }
-*/
-                }
             }
         });
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.d(TAG, "Incoming intent : " + action);
+            switch (action) {
+                case BluetoothDevice.ACTION_FOUND :
+                    // Discovery has found a device. Get the BluetoothDevice
+                    // object and its info from the Intent.
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    Log.d(TAG, "Device discovered! " + BluetoothController.deviceToString(device));
+                    listener.onDeviceDiscovered(device);
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED :
+                    // Discovery has ended.
+                    Log.d(TAG, "Discovery ended.");
+                    listener.onDeviceDiscoveryEnd();
+                    break;
+                case BluetoothAdapter.ACTION_STATE_CHANGED :
+                    // Discovery state changed.
+                    Log.d(TAG, "Bluetooth state changed.");
+                    listener.onBluetoothStatusChanged();
+                    break;
+                case BluetoothDevice.ACTION_BOND_STATE_CHANGED :
+                    // Pairing state has changed.
+                    Log.d(TAG, "Bluetooth bonding state changed.");
+                    listener.onDevicePairingEnded();
+                    break;
+                default :
+                    // Does nothing.
+                    break;
+            }
+        }
 
 
         cbListPairedDevices.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -223,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     showToast("Bluetooth is off (no access)");
                 }
-                break;
                 break;
         }
 
